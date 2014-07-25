@@ -1,0 +1,127 @@
+//
+//  main.cpp
+//  pro1
+//
+//  Created by el1ven on 14-6-6.
+//  Copyright (c) 2014年 el1ven. All rights reserved.
+//
+
+#include <iostream>
+#include <cstring>
+#include <cmath>
+#include <cstdlib>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+//更新的正确版本
+
+int binarySearch(vector<int> arr, int size, int key);
+
+int main(){
+    
+    int n = 0;//点的总数n
+    int m = 0;//查询的次数m
+    
+    vector<int> v;//存储测试数据的数组
+    vector<int> v1;//存储测试数据的数组
+    vector<int> v2;//存储计算结果
+    int a = 0;//范围左边届
+    int b = 0;//范围右边界
+    
+    int x = 0;//输入到数轴上的点的
+    
+    int add1 = 0;
+    int add2 = 0;
+    
+    while(cin>>n>>m){
+        
+        a = 0;//边界初始化
+        b = 0;
+        x = 0;
+        
+        v.clear();
+        v1.clear();
+        
+        for(int i = 0; i < n; i++){
+            cin>>x;
+            v.push_back(x);
+            v1.push_back(x);
+        }
+        
+        sort(v.begin(),v.end());//二分查找之前需要排序
+        sort(v1.begin(),v1.end());//二分查找之前需要排序
+        
+        
+        
+        for(int j = 0; j < m; j++){
+            cin>>a>>b;
+            if(a <= b){
+                int size1 = (int)(v.size());//计算数轴上点的个数
+                add1 = binarySearch(v,size1,a);//先看区间和数轴上的点是否重合
+                add2 = binarySearch(v,size1,b);
+                if( add1 < 0 && add2 < 0){//保证向量之中没有重复元素
+                    v.push_back(a);
+                    v.push_back(b);
+                }
+                if( add1 < 0 && add2 >= 0){
+                    v.push_back(a);
+                }
+                if( add1 >= 0 && add2 < 0){
+                    v.push_back(b);
+                }
+
+
+                sort(v.begin(),v.end());//二分查找之前需要排序
+                
+                int size2 = (int)(v.size());
+                int loc1 = binarySearch(v,size2,a);
+                int loc2 = binarySearch(v,size2,b);
+                int result = loc2 - loc1;
+                //存储计算结果
+                
+                if(add1 >= 0 && add2 >=0){//区间和数轴上的点是否重合
+                    v2.push_back(result+1);
+                }else if((add1 >= 0 && add2 < 0) || (add1 < 0 && add2 >= 0)){
+                    v2.push_back(result);
+                }else{
+                    v2.push_back(result-1);
+                }
+                
+                v.clear();
+                v = v1;
+                
+                add1 = 0;
+                add2 = 0;
+                
+            }
+        }
+        
+        for(int k = 0; k < v2.size(); k++){
+            cout<<v2[k]<<endl;
+        }
+        
+        v2.clear();
+    }
+    return 0;
+}
+
+int binarySearch(vector<int> arr, int size, int key){
+    //二分查找的非递归形式出现
+    
+    int low = 0;//三个控制点
+    int high = size - 1;
+    int mid = 0;
+    
+    while(low <= high){
+        mid = (low + high)/2;
+        if(key < arr[mid]){
+            high = mid - 1;
+        }else if(arr[mid] < key){
+            low = mid + 1;
+        }else{
+            return mid;//返回查找位置
+        }
+    }
+    return -1;
+}
